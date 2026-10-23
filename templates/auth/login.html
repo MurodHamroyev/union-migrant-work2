@@ -4,5 +4,6 @@
 {% for e in form.non_field_errors %}<p class="err">{{ e }}</p>{% endfor %}
 <div class="field"><label>{% t 'login_field' %}</label>{{ form.username }}</div>
 {% t 'password' as pw %}{% include '_pw.html' with f=form.password label=pw %}
+<p class="right"><a href="{% url 'password_reset' %}">{% t 'forgot_pw' %}</a></p>
 <button class="btn full">{% t 'btn_login' %}</button></form>
 <p class="muted center">{% t 'no_account' %} <a href="{% url 'register' %}"><b>{% t 'register' %}</b></a></p></div>{% endblock %}

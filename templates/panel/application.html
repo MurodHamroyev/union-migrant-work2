@@ -6,7 +6,8 @@
 {% if a.status == 'approved' and a.ready_to_go %}<p class="ok">{% icon 'check' %} Работник нажал «Готов поехать». Переведите на «Подача документов».</p>{% endif %}
 <form method="post">{% csrf_token %}
 <div class="field"><label>Статус заявки</label><select name="status">{% for k, l in statuses %}<option value="{{ k }}" {% if k == a.status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
-<div class="field"><label>Ссылка на собеседование</label><input type="url" name="interview_link" value="{{ a.interview_link }}" placeholder="https://"><small class="muted">Увидит работник при статусе «Собеседование»</small></div>
+<div class="field"><label>Дата и время собеседования (по Москве)</label><input type="datetime-local" name="interview_at" value="{{ a.interview_at|date:'Y-m-d\TH:i' }}"></div>
+<div class="field"><label>Ссылка на собеседование</label><input type="url" name="interview_link" value="{{ a.interview_link }}" placeholder="https://"><small class="muted">Для статуса «Собеседование» нужны дата, время и ссылка: работник увидит их в кабинете и получит уведомление</small></div>
 <button class="btn full">Сохранить</button></form></div>
 <div class="card"><h3>Работник</h3><p>{{ a.user.phone }}<br>{{ a.user.country_name }}<br>{{ a.user.username }}</p>
 {% if a.contact1 %}<p class="muted">Контакты: {{ a.contact1 }}, {{ a.contact2 }}</p>{% endif %}

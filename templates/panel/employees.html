@@ -2,10 +2,10 @@
 <h1>Сотрудники</h1>
 <form class="search" method="get">{% icon 'search' %}<input name="q" value="{{ q }}" placeholder="Имя или фамилия">
 {% if user.role == 'admin' %}<select name="wh" onchange="this.form.submit()"><option value="">Все склады</option>{% for w in warehouses %}<option value="{{ w.id }}" {% if w.id|stringformat:"s" == wh %}selected{% endif %}>{{ w }}</option>{% endfor %}</select>{% endif %}</form>
-<div class="card tbl"><table><tr><th>Сотрудник</th><th>Склад</th><th>Статус</th><th>Смен</th><th>Документы</th><th>Работает с</th><th>Раньше работал</th><th>Опыт</th><th></th></tr>
-{% for a in items %}<tr><td><b>{{ a.user.display_name }}</b><br><small>{{ a.user.phone }}</small></td><td>{{ a.vacancy.warehouse|default:"—" }}<br><small>{{ a.vacancy.title }}</small></td>
+<div class="card tbl"><table><tr><th>Сотрудник</th><th>Пол, возраст</th><th>Склад</th><th>Статус</th><th>Смен</th><th>Документы</th><th>Работает с</th><th>Раньше работал</th><th>Опыт</th><th></th></tr>
+{% for a in items %}<tr><td><b>{{ a.user.display_name }}</b><br><small>{{ a.user.phone }}</small></td><td>{{ a.user.get_gender_display|default:"—" }}{% if a.user.age %}, {{ a.user.age }}{% endif %}</td><td>{{ a.vacancy.warehouse|default:"—" }}<br><small>{{ a.vacancy.title }}</small></td>
 <td><span class="badge {{ a.status }}">{{ a.get_status_display }}</span></td><td><b>{{ a.shifts_ok }}</b></td>
 <td>{% if a.docs %}<span class="ok">✓ {{ a.docs }}</span>{% else %}—{% endif %}</td>
 <td>{% if a.started_at %}{{ a.started_at|date:"d.m.Y" }}<br><small>{{ a.days_working }} дн.</small>{% else %}—{% endif %}</td>
 <td>{{ a.user.prev_job|default:"—" }}</td><td>{{ a.user.experience|default:"—" }}</td><td><a href="{% url 'panel_person' a.user.id %}">Открыть</a></td></tr>
-{% empty %}<tr><td colspan="9" class="muted">Сотрудников нет</td></tr>{% endfor %}</table></div>{% endblock %}
+{% empty %}<tr><td colspan="10" class="muted">Сотрудников нет</td></tr>{% endfor %}</table></div>{% endblock %}

@@ -7,6 +7,7 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
 
 from .forms import CompanyForm, StaffForm, VacancyForm, WarehouseForm
@@ -87,19 +88,25 @@ def panel_application(request, pk):
     a = get_object_or_404(Application.objects.select_related("user", "vacancy__warehouse"), pk=pk)
     if request.method == "POST":
         new, link = request.POST.get("status"), request.POST.get("interview_link", "").strip()
-        old_link, changed = a.interview_link, False
+        when = parse_datetime(request.POST.get("interview_at", "") or "")
+        if when and timezone.is_naive(when):
+            when = timezone.make_aware(when)
+        if new == "interview" and (not link or not when):
+            messages.error(request, "Для собеседования укажите дату, время и ссылку")
+            return redirect("panel_application", pk=a.id)
+        changed = new in dict(Application.STATUSES) and new != a.status
+        schedule_changed = (link, when) != (a.interview_link, a.interview_at)
         if new in dict(Application.STATUSES):
-            changed = new != a.status
             a.status = new
             if new == "working" and not a.started_at:
                 a.started_at = timezone.now()
-        a.interview_link = link
+        a.interview_link, a.interview_at = link, when
         a.save()
         u = a.user
         if changed:
             notify(u, "n_status", status=tr(u.lang, "status_" + new))
-        if link and link != old_link:
-            notify(u, "n_interview")
+        if new == "interview" and (schedule_changed or changed):
+            notify(u, "n_interview", date=f"{timezone.localtime(when):%d.%m.%Y %H:%M}")
         messages.success(request, "Сохранено")
         return redirect("panel_application", pk=a.id)
     return render(request, "panel/application.html", {"a": a, "statuses": Application.STATUSES,
@@ -297,3 +304,17 @@ def panel_problems(request):
 def panel_problem_resolve(request, pk):
     Problem.objects.filter(pk=pk).update(status="resolved")
     return redirect("panel_problems")
+
+
+@admin_only
+@require_POST
+def panel_set_password(request, uid):
+    u = get_object_or_404(User, pk=uid, role="worker")
+    pw = request.POST.get("password", "")
+    if len(pw) < 6:
+        messages.error(request, "Пароль должен быть не короче 6 символов")
+    else:
+        u.set_password(pw)
+        u.save(update_fields=["password"])
+        messages.success(request, "Новый пароль установлен. Данные работника не изменились.")
+    return redirect("panel_person", uid=uid)

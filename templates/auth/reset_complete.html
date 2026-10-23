@@ -1,0 +1,3 @@
+{% extends 'base.html' %}{% load ui %}{% block content %}
+<div class="authcard center"><div class="logo big"><i>M</i><span>MigrantWork</span></div>{% icon 'check' 'big' %}<p>{% t 'reset_done' %}</p>
+<a class="btn full" href="{% url 'login' %}">{% t 'btn_login' %}</a></div>{% endblock %}

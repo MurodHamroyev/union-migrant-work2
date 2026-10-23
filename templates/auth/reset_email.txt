@@ -1,0 +1,7 @@
+{% autoescape off %}MigrantWork
+
+Ссылка для смены пароля / Parolni almashtirish havolasi / Пайванди иваз кардани парол / Сырсөздү алмаштыруу шилтемеси / 비밀번호 변경 링크:
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+Если вы не запрашивали смену пароля, просто проигнорируйте это письмо.
+{% endautoescape %}

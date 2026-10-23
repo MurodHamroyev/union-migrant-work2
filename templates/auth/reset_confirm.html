@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% load ui %}{% block content %}
+<div class="authcard"><div class="logo big"><i>M</i><span>MigrantWork</span></div><h1>{% t 'forgot_title' %}</h1>
+{% if validlink %}<form method="post">{% csrf_token %}{% t 'new_password' as p1 %}{% t 'password2' as p2 %}
+{% include '_pw.html' with f=form.new_password1 label=p1 %}{% include '_pw.html' with f=form.new_password2 label=p2 %}
+<button class="btn full">{% t 'btn_save_password' %}</button></form>
+{% else %}<p class="err">{% t 'reset_invalid' %}</p><a class="btn full" href="{% url 'password_reset' %}">{% t 'btn_send_link' %}</a>{% endif %}</div>{% endblock %}

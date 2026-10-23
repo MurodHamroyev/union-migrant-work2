@@ -47,11 +47,11 @@ class SiteLogin(LoginView):
 
 
 def register(request):
-    form = RegisterForm(request.POST or None, initial={"country": "UZ"})
+    form = RegisterForm(request.POST or None, lang=request.lang, initial={"country": "UZ"})
     if form.is_valid():
         login(request, form.save(lang=request.lang))
         return redirect("dashboard")
-    return render(request, "auth/register.html", {"form": form, "countries": COUNTRIES})
+    return render(request, "auth/register.html", {"form": form, "countries": COUNTRIES, "today": timezone.localdate().isoformat()})
 
 
 @require_POST
@@ -81,11 +81,15 @@ def dashboard(request):
 
 @worker_only
 def vacancies(request):
-    q = request.GET.get("q", "").strip()
+    q, g, w = request.GET.get("q", "").strip(), request.GET.get("g", ""), request.GET.get("w", "")
     items = Vacancy.objects.filter(is_active=True).select_related("warehouse").prefetch_related("photos")
+    if g in ("f", "m"):
+        items = items.filter(**{"for_women" if g == "f" else "for_men": True})
+    if w in ("part", "perm"):
+        items = items.filter(**{"part_time" if w == "part" else "permanent": True})
     if q:
         items = [v for v in items if name_match(f"{v.title} {v.location()} {v.warehouse or ''}", q)]
-    return render(request, "vacancies.html", {"items": items, "q": q,
+    return render(request, "vacancies.html", {"items": items, "q": q, "g": g, "w": w,
                                               "applied": set(request.user.applications.values_list("vacancy_id", flat=True))})
 
 

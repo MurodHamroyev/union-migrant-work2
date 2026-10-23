@@ -1,6 +1,6 @@
 {% extends 'panel/base.html' %}{% block content %}
 <div class="row"><h1>Вакансии</h1><a class="btn sm" href="{% url 'panel_vacancy_new' %}">Добавить</a></div>
-{% for v in items %}<div class="card item"><div><b>{{ v.title }}</b>{% if not v.is_active %} <span class="badge">скрыта</span>{% endif %}<br><span class="muted">{{ v.warehouse|default:"Склад не выбран" }} · {{ v.salary }} ₽ · {{ v.schedule }} · заявок: {{ v.n }}</span></div>
+{% for v in items %}<div class="card item"><div><b>{{ v.title }}</b>{% if not v.is_active %} <span class="badge">скрыта</span>{% endif %}<br><span class="muted">{{ v.warehouse|default:"Склад не выбран" }} · {{ v.salary }} ₽ · {{ v.schedule }} · заявок: {{ v.n }}</span><br><span class="muted">{% if v.for_women %}женщинам{% endif %}{% if v.for_women and v.for_men %}, {% endif %}{% if v.for_men %}мужчинам{% endif %} · {% if v.part_time %}подработка{% endif %}{% if v.part_time and v.permanent %}, {% endif %}{% if v.permanent %}постоянная{% endif %}</span></div>
 <div class="acts"><a href="{% url 'panel_vacancy_edit' v.id %}">Изменить</a>
 <form method="post" action="{% url 'panel_vacancy_delete' v.id %}" onsubmit="return confirm('Удалить вакансию и все заявки на неё?')">{% csrf_token %}<button class="ghost red">Удалить</button></form></div></div>
 {% empty %}<p class="muted">Вакансий пока нет</p>{% endfor %}{% endblock %}

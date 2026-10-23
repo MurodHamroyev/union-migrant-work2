@@ -1,6 +1,7 @@
 {% load ui %}{% if a.status == 'interview' %}
 <div class="stage blue"><b>{% icon 'calendar' %} {% t 'interview_title' %}</b>
-{% if a.interview_link %}<a class="btn full" href="{{ a.interview_link }}" target="_blank" rel="noopener">{% icon 'link' %} {% t 'join_interview' %}</a>{% else %}<p class="muted">{% t 'interview_wait' %}</p>{% endif %}</div>
+{% if a.interview_link and a.interview_at %}<div class="when"><small>{% t 'interview_when' %} · {% t 'msk_note' %}</small><b>{{ a.interview_at|date:"d.m.Y" }} · {{ a.interview_at|date:"H:i" }}</b></div>
+<a class="btn full" href="{{ a.interview_link }}" target="_blank" rel="noopener">{% icon 'link' %} {% t 'join_interview' %}</a>{% else %}<p class="muted">{% t 'interview_wait' %}</p>{% endif %}</div>
 {% elif a.status == 'approved' %}
 <div class="stage green"><b>{% icon 'check' %} {% t 'approved_title' %}</b><p>{% t 'approved_q' %}</p>
 {% if a.ready_to_go %}<p class="ok">{% t 'ready_sent' %}</p>{% else %}<div class="two">

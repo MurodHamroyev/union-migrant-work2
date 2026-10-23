@@ -13,6 +13,11 @@ def private_storage():
     return FileSystemStorage(location=settings.PRIVATE_ROOT)
 
 
+def calc_age(born, today=None):
+    today = today or timezone.localdate()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+
 class Warehouse(models.Model):
     name = models.CharField("Название", max_length=150)
     city = models.CharField("Город", max_length=100)
@@ -28,6 +33,8 @@ class User(AbstractUser):
     country = models.CharField("Страна", max_length=2, blank=True)
     phone = models.CharField("Телефон", max_length=30, blank=True)
     lang = models.CharField(max_length=2, default="ru")
+    gender = models.CharField("Пол", max_length=1, blank=True, choices=[("m", "Мужчина"), ("f", "Женщина")])
+    birth_date = models.DateField("Дата рождения", null=True, blank=True)
     prev_job = models.CharField("Кем работал раньше", max_length=200, blank=True)
     experience = models.CharField("Опыт работы", max_length=100, blank=True)
     warehouse = models.ForeignKey(Warehouse, null=True, blank=True, on_delete=models.SET_NULL, related_name="managers")
@@ -39,6 +46,9 @@ class User(AbstractUser):
 
     def display_name(self):
         return f"{self.first_name} {self.last_name}".strip() or self.username
+
+    def age(self):
+        return calc_age(self.birth_date) if self.birth_date else None
 
     def country_name(self):
         c = BY_ISO.get(self.country)
@@ -52,6 +62,10 @@ class Vacancy(models.Model):
     salary = models.PositiveIntegerField("Зарплата, ₽")
     schedule = models.CharField("График", max_length=20, default="5/2")
     shift_hours = models.PositiveSmallIntegerField("Часов в смену", default=8)
+    for_women = models.BooleanField("Для женщин", default=True)
+    for_men = models.BooleanField("Для мужчин", default=True)
+    part_time = models.BooleanField("Подработка", default=False)
+    permanent = models.BooleanField("Постоянная работа", default=True)
     description = models.TextField("Описание", blank=True)
     requirements = models.TextField("Требования", blank=True)
     conditions = models.TextField("Условия (жильё, питание, выплаты)", blank=True)
@@ -86,6 +100,7 @@ class Application(models.Model):
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name="applications")
     status = models.CharField(max_length=20, choices=STATUSES, default="applied")
     interview_link = models.URLField("Ссылка на собеседование", blank=True)
+    interview_at = models.DateTimeField("Дата и время собеседования", null=True, blank=True)
     ready_to_go = models.BooleanField("Готов приехать", default=False)
     contact1 = models.CharField(max_length=40, blank=True)
     contact2 = models.CharField(max_length=40, blank=True)

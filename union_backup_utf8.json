@@ -1,0 +1,110 @@
+[
+{
+  "model": "core.warehouse",
+  "pk": 1,
+  "fields": {
+    "name": "e",
+    "city": "e",
+    "address": "e"
+  }
+},
+{
+  "model": "core.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$SjAeCC5I4FZnIYh02hcBIn$nK5eXL0aWEev7a0pLKHQ5bD/MPB8ocrbLdHkjoCNRkk=",
+    "last_login": "2026-10-20T08:37:50.359Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-10-20T08:33:07.752Z",
+    "role": "admin",
+    "country": "",
+    "phone": "",
+    "lang": "ru",
+    "prev_job": "",
+    "experience": "",
+    "warehouse": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$e0fTMB2puK1evdVB2xiat4$B3FyNsR8J2TnEoiWOpSa2iiTzUOqPqYYW5/6LWWYpSM=",
+    "last_login": "2026-10-20T13:14:34.102Z",
+    "is_superuser": false,
+    "username": "a@gmail.com",
+    "first_name": "Мурод",
+    "last_name": "Хамроев",
+    "email": "a@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-20T08:38:56.808Z",
+    "role": "worker",
+    "country": "UZ",
+    "phone": "+998936383035",
+    "lang": "ru",
+    "prev_job": "Gg",
+    "experience": "1",
+    "warehouse": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "core.vacancy",
+  "pk": 1,
+  "fields": {
+    "title": "e",
+    "warehouse": 1,
+    "salary": 213,
+    "schedule": "5/2",
+    "shift_hours": 8,
+    "description": "e",
+    "requirements": "e",
+    "conditions": "e",
+    "is_active": true,
+    "created_at": "2026-10-20T08:39:32.199Z"
+  }
+},
+{
+  "model": "core.application",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "a@gmail.com"
+    ],
+    "vacancy": 1,
+    "status": "applied",
+    "interview_link": "",
+    "ready_to_go": false,
+    "contact1": "",
+    "contact2": "",
+    "docs_submitted_at": null,
+    "started_at": null,
+    "legal_type": "",
+    "doc_first_name": "",
+    "doc_last_name": "",
+    "bank_details": "",
+    "final_submitted_at": null,
+    "created_at": "2026-10-20T08:39:39.023Z"
+  }
+},
+{
+  "model": "core.notification",
+  "pk": 1,
+  "fields": {
+    "user": null,
+    "for_admin": true,
+    "text": "Новая заявка: Мурод Хамроев — e",
+    "url": "/panel/applications/",
+    "is_read": false,
+    "created_at": "2026-10-20T08:39:39.027Z"
+  }
+}
+]

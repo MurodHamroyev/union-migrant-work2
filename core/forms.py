@@ -4,7 +4,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.password_validation import validate_password
 
 from .countries import BY_ISO, CHOICES
-from .models import CompanyInfo, Problem, User, Vacancy, Warehouse
+from django.utils import timezone
+
+from .i18n import tr
+from .models import CompanyInfo, Problem, User, Vacancy, Warehouse, calc_age
 
 
 class LoginForm(AuthenticationForm):
@@ -17,6 +20,8 @@ class LoginForm(AuthenticationForm):
 class RegisterForm(forms.Form):
     first_name = forms.CharField(max_length=60)
     last_name = forms.CharField(max_length=60)
+    gender = forms.ChoiceField(choices=[("m", "m"), ("f", "f")])
+    birth_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     country = forms.ChoiceField(choices=CHOICES, initial="UZ")
     phone = forms.CharField(max_length=20)
     email = forms.EmailField()
@@ -24,6 +29,18 @@ class RegisterForm(forms.Form):
     experience = forms.CharField(max_length=100, required=False)
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
+
+    def __init__(self, *a, lang="ru", **kw):
+        super().__init__(*a, **kw)
+        self.lang = lang
+
+    def clean_birth_date(self):
+        b = self.cleaned_data["birth_date"]
+        if b > timezone.localdate() or b.year < 1920:
+            raise forms.ValidationError("Проверьте дату рождения")
+        if calc_age(b) < 18:
+            raise forms.ValidationError(tr(self.lang, "age_error"))
+        return b
 
     def clean_email(self):
         e = self.cleaned_data["email"].strip().lower()
@@ -53,7 +70,7 @@ class RegisterForm(forms.Form):
         return User.objects.create_user(
             username=c["email"], email=c["email"], password=c["password1"], first_name=c["first_name"],
             last_name=c["last_name"], country=c["country"], phone=dial + d, lang=lang,
-            prev_job=c["prev_job"], experience=c["experience"])
+            prev_job=c["prev_job"], experience=c["experience"], gender=c["gender"], birth_date=c["birth_date"])
 
 
 class VacancyForm(forms.ModelForm):
@@ -61,6 +78,14 @@ class VacancyForm(forms.ModelForm):
         model = Vacancy
         exclude = ("created_at",)
         widgets = {k: forms.Textarea(attrs={"rows": 3}) for k in ("description", "requirements", "conditions")}
+
+    def clean(self):
+        c = super().clean()
+        if not c.get("for_women") and not c.get("for_men"):
+            raise forms.ValidationError("Отметьте, для кого вакансия: для женщин и/или для мужчин")
+        if not c.get("part_time") and not c.get("permanent"):
+            raise forms.ValidationError("Отметьте тип работы: подработка и/или постоянная работа")
+        return c
 
 
 class WarehouseForm(forms.ModelForm):

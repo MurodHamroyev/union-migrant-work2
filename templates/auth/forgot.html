@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% load ui %}{% block content %}
+<div class="authcard"><div class="logo big"><i>M</i><span>MigrantWork</span></div><h1>{% t 'forgot_title' %}</h1><p class="muted">{% t 'forgot_hint' %}</p>
+<form method="post">{% csrf_token %}<div class="field"><label>{% t 'email' %}</label>{{ form.email }}{% for e in form.email.errors %}<p class="err">{{ e }}</p>{% endfor %}</div>
+<button class="btn full">{% t 'btn_send_link' %}</button></form>
+<p class="muted center"><a href="{% url 'login' %}"><b>{% t 'btn_login' %}</b></a></p></div>{% endblock %}

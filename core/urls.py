@@ -1,4 +1,6 @@
+from django.contrib.auth import views as av
 from django.contrib.auth.views import LogoutView
+from django.urls import reverse_lazy
 from django.urls import path
 from . import panel_views as p
 from . import views as v
@@ -8,6 +10,12 @@ urlpatterns = [
     path("login/", v.SiteLogin.as_view(), name="login"),
     path("logout/", LogoutView.as_view(next_page="login"), name="logout"),
     path("register/", v.register, name="register"),
+    path("forgot/", av.PasswordResetView.as_view(template_name="auth/forgot.html", email_template_name="auth/reset_email.txt",
+         subject_template_name="auth/reset_subject.txt", success_url=reverse_lazy("password_reset_done")), name="password_reset"),
+    path("forgot/sent/", av.PasswordResetDoneView.as_view(template_name="auth/forgot_done.html"), name="password_reset_done"),
+    path("reset/<uidb64>/<token>/", av.PasswordResetConfirmView.as_view(template_name="auth/reset_confirm.html",
+         success_url=reverse_lazy("password_reset_complete")), name="password_reset_confirm"),
+    path("reset/done/", av.PasswordResetCompleteView.as_view(template_name="auth/reset_complete.html"), name="password_reset_complete"),
     path("lang/", v.set_lang, name="set_lang"),
     path("vacancies/", v.vacancies, name="vacancies"),
     path("vacancies/<int:pk>/apply/", v.apply, name="apply"),
@@ -42,6 +50,7 @@ urlpatterns = [
     path("panel/team/<int:pk>/delete/", p.panel_team_delete, name="panel_team_delete"),
     path("panel/employees/", p.panel_employees, name="panel_employees"),
     path("panel/people/<int:uid>/", p.panel_person, name="panel_person"),
+    path("panel/people/<int:uid>/password/", p.panel_set_password, name="panel_set_password"),
     path("panel/company/", p.panel_company, name="panel_company"),
     path("panel/certificates/<int:pk>/delete/", p.panel_cert_delete, name="panel_cert_delete"),
     path("panel/problems/", p.panel_problems, name="panel_problems"),

@@ -3,6 +3,12 @@
 <form method="post">{% csrf_token %}
 <div class="two"><div class="field"><label>{% t 'first_name' %}</label>{{ form.first_name }}{% for e in form.first_name.errors %}<p class="err">{{ e }}</p>{% endfor %}</div>
 <div class="field"><label>{% t 'last_name' %}</label>{{ form.last_name }}{% for e in form.last_name.errors %}<p class="err">{{ e }}</p>{% endfor %}</div></div>
+<div class="field"><label>{% t 'gender' %}</label><div class="seg">
+<label><input type="radio" name="gender" value="m" {% if form.gender.value == 'm' %}checked{% endif %} required><span>{% t 'male' %}</span></label>
+<label><input type="radio" name="gender" value="f" {% if form.gender.value == 'f' %}checked{% endif %}><span>{% t 'female' %}</span></label></div>
+{% for e in form.gender.errors %}<p class="err">{{ e }}</p>{% endfor %}</div>
+<div class="field"><label for="birth">{% t 'birth_date' %}</label><input type="date" name="birth_date" id="birth" value="{{ form.birth_date.value|default:'' }}" min="1920-01-01" max="{{ today }}" required>
+{% for e in form.birth_date.errors %}<p class="err">{{ e }}</p>{% endfor %}<p class="err" id="agewarn" hidden>{% t 'age_error' %}</p></div>
 <div class="field"><label>{% t 'country' %}</label>
 <button type="button" class="picker" data-open="cdlg"><span id="cflag"></span><span id="cname"></span>{% icon 'chev' %}</button>
 <input type="hidden" name="country" id="country" value="{{ form.country.value|default:'UZ' }}"></div>
@@ -15,7 +21,7 @@
 {% t 'password' as pw1 %}{% t 'password2' as pw2 %}{% include '_pw.html' with f=form.password1 label=pw1 %}
 {% include '_pw.html' with f=form.password2 label=pw2 %}
 {% for e in form.non_field_errors %}<p class="err">{{ e }}</p>{% endfor %}
-<button class="btn full">{% t 'btn_register' %}</button></form>
+<button class="btn full" id="regbtn">{% t 'btn_register' %}</button></form>
 <p class="muted center">{% t 'have_account' %} <a href="{% url 'login' %}"><b>{% t 'btn_login' %}</b></a></p></div>
 
 <dialog id="cdlg" class="sheet"><div class="sheet-h"><b>{% t 'choose_country' %}</b><button type="button" class="iconbtn" data-close>{% icon 'x' %}</button></div>

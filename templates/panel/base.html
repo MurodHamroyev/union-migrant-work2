@@ -6,8 +6,8 @@
 <nav>
 {% if role == 'admin' %}
  <a href="{% url 'panel_dashboard' %}" class="{% if n == 'panel_dashboard' %}on{% endif %}">{% icon 'grid' %}<span>Дашборд</span></a>
- <a href="{% url 'panel_applications' %}" class="{% if 'application' in n %}on{% endif %}">{% icon 'briefcase' %}<span>Заявки</span></a>
- <a href="{% url 'panel_shifts' %}" class="{% if n == 'panel_shifts' %}on{% endif %}">{% icon 'check' %}<span>Смены</span></a>
+ <a href="{% url 'panel_applications' %}" class="{% if 'application' in n %}on{% endif %}">{% icon 'briefcase' %}<span>Заявки</span>{% if new_apps %}<b class="dot" title="Новые заявки">{{ new_apps }}</b>{% endif %}</a>
+ <a href="{% url 'panel_shifts' %}" class="{% if n == 'panel_shifts' %}on{% endif %}">{% icon 'check' %}<span>Смены</span>{% if pending_shifts %}<b class="dot">{{ pending_shifts }}</b>{% endif %}</a>
  <a href="{% url 'panel_vacancies' %}" class="{% if 'vacanc' in n %}on{% endif %}">{% icon 'file' %}<span>Вакансии</span></a>
  <a href="{% url 'panel_warehouses' %}" class="{% if 'warehouse' in n %}on{% endif %}">{% icon 'box' %}<span>Склады</span></a>
  <a href="{% url 'panel_employees' %}" class="{% if n == 'panel_employees' or n == 'panel_person' %}on{% endif %}">{% icon 'users' %}<span>Сотрудники</span></a>

@@ -1,5 +1,5 @@
 from .i18n import LANGS
-from .models import Notification
+from .models import Application, Notification, Shift
 
 VALID = {l for l, _ in LANGS}
 
@@ -22,4 +22,8 @@ def ui(request):
         qs = Notification.objects.filter(is_read=False)
         unread = qs.filter(for_admin=True).count() if u.role == "admin" else (
             qs.filter(user=u).count() if u.role == "worker" else 0)
-    return {"LANGS": LANGS, "lang": getattr(request, "lang", "ru"), "unread": unread}
+    ctx = {"LANGS": LANGS, "lang": getattr(request, "lang", "ru"), "unread": unread}
+    if u.is_authenticated and u.role == "admin":
+        ctx["new_apps"] = Application.objects.filter(status="applied").count()
+        ctx["pending_shifts"] = Shift.objects.filter(status="pending").count()
+    return ctx

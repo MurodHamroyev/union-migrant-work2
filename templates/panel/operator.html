@@ -2,7 +2,7 @@
 <h1>Поиск сотрудников</h1><p class="muted">Введите имя или фамилию, чтобы открыть пакет документов</p>
 <form class="search big" method="get">{% icon 'search' %}<input name="q" value="{{ q }}" placeholder="Например: Иван Иванов" autofocus></form>
 {% for p in people %}<div class="card pack"><div class="selfie">{% if p.selfie %}<img src="{% url 'private_file' 'doc' p.selfie.id %}" alt="">{% else %}{% icon 'users' 'big' %}{% endif %}</div>
-<div class="grow"><b>{{ p.display_name }}</b><br><span class="muted">{{ p.phone }} · {{ p.country_name }}</span>
+<div class="grow"><b>{{ p.display_name }}</b><br><span class="muted">{{ p.phone }} · {{ p.country_name }}<br>{{ p.get_gender_display }}{% if p.age %}, {{ p.age }}{% endif %}</span>
 <p class="muted">{% if p.app %}{{ p.app.vacancy.warehouse|default:"" }} · {{ p.app.get_status_display }}{% endif %}<br>Файлов: {{ p.docs }}</p>
 <a class="btn sm" href="{% url 'panel_person' p.id %}">Открыть пакет</a> <a class="btn light sm" href="{% url 'person_zip' p.id %}">{% icon 'download' %} ZIP</a></div></div>
 {% empty %}{% if q %}<p class="muted">Никого не найдено</p>{% endif %}{% endfor %}{% endblock %}

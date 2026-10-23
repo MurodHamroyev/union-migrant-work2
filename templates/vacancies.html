@@ -1,17 +1,27 @@
 {% extends 'base.html' %}{% load ui %}{% block content %}
 <section class="hero"><h1>{% t 'jobs_title' %}</h1><p>{% t 'jobs_sub' %}</p></section>
-<form class="search" method="get">{% icon 'search' %}<input name="q" value="{{ q }}" placeholder="{% t 'search_ph' %}"></form>
+<form class="search" method="get">{% icon 'search' %}<input name="q" value="{{ q }}" placeholder="{% t 'search_ph' %}"><input type="hidden" name="g" value="{{ g }}"><input type="hidden" name="w" value="{{ w }}"></form>
+<div class="chips scroll">
+<a class="chip {% if not g %}on{% endif %}" href="?q={{ q|urlencode }}&w={{ w }}">{% t 'f_all' %}</a>
+<a class="chip {% if g == 'f' %}on{% endif %}" href="?q={{ q|urlencode }}&g=f&w={{ w }}">{% t 'f_women' %}</a>
+<a class="chip {% if g == 'm' %}on{% endif %}" href="?q={{ q|urlencode }}&g=m&w={{ w }}">{% t 'f_men' %}</a>
+<span class="sep"></span>
+<a class="chip {% if not w %}on{% endif %}" href="?q={{ q|urlencode }}&g={{ g }}">{% t 'f_all' %}</a>
+<a class="chip {% if w == 'part' %}on{% endif %}" href="?q={{ q|urlencode }}&g={{ g }}&w=part">{% t 'f_part' %}</a>
+<a class="chip {% if w == 'perm' %}on{% endif %}" href="?q={{ q|urlencode }}&g={{ g }}&w=perm">{% t 'f_perm' %}</a></div>
 <div class="grid2">{% for v in items %}
 <button class="card vac" type="button" data-open="v{{ v.id }}">
   {% with p=v.photos.all.0 %}{% if p %}<img class="cover" src="{{ p.image.url }}" alt="" loading="lazy">{% endif %}{% endwith %}
   <h3>{{ v.title }}</h3><p class="muted">{% icon 'pin' %} {{ v.location }}</p>
   <p class="meta"><span class="money">{{ v.salary }} ₽</span><span>{% icon 'clock' %} {{ v.schedule }}, {{ v.shift_hours }} {% t 'hours' %}</span></p>
+  <p class="tags">{% if v.for_women %}<span class="tag">{% t 'f_women' %}</span>{% endif %}{% if v.for_men %}<span class="tag">{% t 'f_men' %}</span>{% endif %}{% if v.part_time %}<span class="tag alt">{% t 'f_part' %}</span>{% endif %}{% if v.permanent %}<span class="tag alt">{% t 'f_perm' %}</span>{% endif %}</p>
   {% if v.id in applied %}<span class="badge approved">{% t 'applied_badge' %}</span>{% endif %}
 </button>
 <dialog id="v{{ v.id }}" class="sheet">
   <div class="sheet-h"><b>{{ v.title }}</b><button type="button" class="iconbtn" data-close aria-label="{% t 'close' %}">{% icon 'x' %}</button></div>
   {% if v.photos.all %}<div class="gallery">{% for p in v.photos.all %}<img src="{{ p.image.url }}" alt="" loading="lazy">{% endfor %}</div>{% endif %}
   <div class="chips"><span class="chip money">{{ v.salary }} ₽</span><span class="chip">{{ v.schedule }}, {{ v.shift_hours }} {% t 'hours' %}</span></div>
+  <p class="tags">{% if v.for_women %}<span class="tag">{% t 'f_women' %}</span>{% endif %}{% if v.for_men %}<span class="tag">{% t 'f_men' %}</span>{% endif %}{% if v.part_time %}<span class="tag alt">{% t 'f_part' %}</span>{% endif %}{% if v.permanent %}<span class="tag alt">{% t 'f_perm' %}</span>{% endif %}</p>
   {% if v.warehouse %}<p class="kv"><small>{% t 'warehouse' %}</small>{{ v.warehouse.name }}<br><span class="muted">{{ v.location }}</span></p>{% endif %}
   {% if v.description %}<p class="kv"><small>{% t 'description' %}</small>{{ v.description|linebreaksbr }}</p>{% endif %}
   {% if v.requirements %}<p class="kv"><small>{% t 'requirements' %}</small>{{ v.requirements|linebreaksbr }}</p>{% endif %}

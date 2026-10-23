@@ -1,7 +1,8 @@
 {% extends 'panel/base.html' %}{% load ui %}{% block content %}
 <a class="back" href="{% url 'panel_employees' %}">← Сотрудники</a>
-<div class="row"><div><h1>{{ p.display_name }}</h1><p class="muted">{{ p.phone }} · {{ p.country_name }} · {{ p.username }}</p></div><a class="btn" href="{% url 'person_zip' p.id %}">{% icon 'download' %} Скачать всё (ZIP)</a></div>
+<div class="row"><div><h1>{{ p.display_name }}</h1><p class="muted">{{ p.phone }} · {{ p.country_name }} · {{ p.username }}<br>{{ p.get_gender_display|default:"пол не указан" }}{% if p.age %}, {{ p.age }} лет ({{ p.birth_date|date:"d.m.Y" }}){% endif %}</p></div><a class="btn" href="{% url 'person_zip' p.id %}">{% icon 'download' %} Скачать всё (ZIP)</a></div>
 <div class="card"><p><b>Раньше работал:</b> {{ p.prev_job|default:"—" }}<br><b>Опыт:</b> {{ p.experience|default:"—" }}</p></div>
+{% if user.role == 'admin' %}<form class="card row" method="post" action="{% url 'panel_set_password' p.id %}">{% csrf_token %}<input name="password" placeholder="Новый пароль работнику (от 6 символов)" minlength="6" required><button class="btn light sm">Сменить пароль</button></form>{% endif %}
 <h2>Заявки</h2>{% for a in apps %}<div class="card item slim"><div><b>{{ a.vacancy.title }}</b><br><span class="muted">{{ a.vacancy.warehouse|default:"" }}{% if a.started_at %} · с {{ a.started_at|date:"d.m.Y" }} ({{ a.days_working }} дн.){% endif %} · смен: {{ a.shifts_ok }}</span>
 {% if a.legal_type %}<br><span class="muted">Оформление: {{ a.legal_type }} · {{ a.doc_first_name }} {{ a.doc_last_name }}</span>{% endif %}{% if a.bank_details %}<br><span class="muted">Реквизиты: {{ a.bank_details }}</span>{% endif %}{% if a.contact1 %}<br><span class="muted">Контакты: {{ a.contact1 }}, {{ a.contact2 }}</span>{% endif %}</div>
 <span class="badge {{ a.status }}">{{ a.get_status_display }}</span></div>{% endfor %}
